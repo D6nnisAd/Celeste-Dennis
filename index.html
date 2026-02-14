@@ -94,7 +94,7 @@
         }
 
         .navbar-brand img {
-            height: 35px; /* Adjust as needed */
+            height: 28px; /* Reduced by 20% from 35px */
             width: auto;
         }
 
@@ -129,6 +129,13 @@
             transform: scale(1.05);
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
             color: var(--primary-green);
+        }
+        
+        /* Login Nav Link */
+        .nav-link.login-link {
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            padding: 5px 20px !important;
         }
 
         /* Hamburger Toggler */
@@ -953,7 +960,8 @@
                     <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                     <li class="nav-item"><a class="nav-link" href="#packages">Packages</a></li>
                     <li class="nav-item"><a class="nav-link" href="merchant.html">Merchant</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#faq">Faqs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link login-link ms-lg-2" href="login.html">Login</a></li>
                 </ul>
             </div>
 
@@ -1420,11 +1428,12 @@
                         <p class="footer-text">
                             Grow and build influence. Celeste is your gateway to monetizing your digital presence through smart participation.
                         </p>
+                        <p class="footer-text text-white-50 mb-0"><i class="fa-solid fa-envelope me-2"></i> support@celesteofficial.com.ng</p>
                         <div class="social-links mt-3">
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-telegram"></i></a>
-                            <a href="#"><i class="fab fa-tiktok"></i></a>
+                            <a href="https://x.com/Celeste6642533" target="_blank"><i class="fab fa-twitter"></i></a>
+                            <a href="https://t.me/Celesteoffical" target="_blank"><i class="fab fa-telegram"></i></a>
+                            <a href="https://www.tiktok.com/@celesteofficial26" target="_blank"><i class="fab fa-tiktok"></i></a>
+                            <a href="https://youtube.com/@thecelesteoffical?si=vPoeci0NKrT4xfjA" target="_blank"><i class="fab fa-youtube"></i></a>
                         </div>
                     </div>
 
@@ -1432,10 +1441,21 @@
                     <div class="col-lg-2 col-md-4 mb-4 mb-lg-0 offset-lg-1">
                         <h5 class="footer-heading">Company</h5>
                         <ul class="footer-links">
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#features">Features</a></li>
-                            <li><a href="#packages">Pricing</a></li>
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="contact.html">Contact Us</a></li>
+                            <li><a href="index.html#features">Features</a></li>
+                            <li><a href="index.html#packages">Pricing</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Legal Links (CRITICAL FOR ADS) -->
+                    <div class="col-lg-3 col-md-4">
+                        <h5 class="footer-heading">Legal</h5>
+                        <ul class="footer-links">
+                            <li><a href="privacy.html">Privacy Policy</a></li>
+                            <li><a href="terms.html">Terms of Service</a></li>
+                            <li><a href="refund-policy.html">Refund Policy</a></li>
+                            <li><a href="login.html">Login</a></li>
                         </ul>
                     </div>
                     
@@ -1446,7 +1466,7 @@
                 </div>
                 
                 <div class="disclaimer">
-                    Disclaimer: Results may vary based on individual effort and engagement. Celeste provides opportunities for monetization through social media tasks and challenges. Past performance does not guarantee future results.
+                    Disclaimer: Results may vary based on individual effort and engagement. Celeste provides opportunities for monetization through social media tasks and challenges. Past performance does not guarantee future results. Access codes purchased from third-party merchants are non-refundable once activated.
                 </div>
             </div>
         </footer>

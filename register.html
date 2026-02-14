@@ -435,9 +435,9 @@
             <!-- Error Message Container (Hidden by default) -->
             <div id="error-message" class="alert-error">
                 <i class="fa-solid fa-circle-exclamation"></i>
-                <div class="error-content">
-                    <strong>Invalid Code</strong><br>
-                    Please double check your code or <a href="merchant.html">get a new code here.</a>
+                <div class="error-content" id="error-text">
+                    <strong>Registration Failed</strong><br>
+                    Please try again.
                 </div>
             </div>
 
@@ -475,22 +475,22 @@
 
                 <!-- Form Fields -->
                 <div class="form-group">
-                    <input type="text" class="form-control" id="fullName" placeholder=" " required>
+                    <input type="text" class="form-control" id="fullName" placeholder=" " required autocomplete="name">
                     <label for="fullName" class="form-label">Full Name</label>
                 </div>
 
                 <div class="form-group">
-                    <input type="email" class="form-control" id="email" placeholder=" " required>
+                    <input type="email" class="form-control" id="email" placeholder=" " required autocomplete="email">
                     <label for="email" class="form-label">Email Address</label>
                 </div>
 
                 <div class="form-group">
-                    <input type="password" class="form-control" id="password" placeholder=" " required>
+                    <input type="password" class="form-control" id="password" placeholder=" " required minlength="6" autocomplete="new-password">
                     <label for="password" class="form-label">Password</label>
                 </div>
 
                 <div class="form-group">
-                    <input type="text" class="form-control" id="accessCode" placeholder=" " required>
+                    <input type="text" class="form-control" id="accessCode" placeholder=" " required autocomplete="off">
                     <label for="accessCode" class="form-label">Access Code</label>
                 </div>
 
@@ -507,7 +507,7 @@
             </form>
 
             <div class="auth-footer">
-                <a href="#">Privacy Policy</a> • <a href="#">Terms of Service</a>
+                <a href="privacy.html">Privacy Policy</a> • <a href="terms.html">Terms of Service</a>
                 <div class="disclaimer mt-3">
                     Disclaimer: Results may vary based on individual effort and engagement. Celeste provides opportunities for monetization through social media tasks. Past performance does not guarantee future results.
                 </div>
@@ -520,7 +520,11 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
-    <script>
+    <script type="module">
+        import { auth, db } from './firebase-init.js';
+        import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
         $(document).ready(function() {
             // Initialize Animation
             AOS.init();
@@ -533,13 +537,21 @@
             });
 
             // Form Submission Logic
-            $('#registerForm').on('submit', function(e) {
+            $('#registerForm').on('submit', async function(e) {
                 e.preventDefault();
                 
                 var $btn = $('#submitBtn');
                 var $btnText = $btn.find('.btn-text');
                 var $spinner = $btn.find('.spinner');
                 var $errorMsg = $('#error-message');
+                var $errorText = $('#error-text');
+
+                // Inputs
+                var email = $('#email').val();
+                var password = $('#password').val();
+                var fullName = $('#fullName').val();
+                var code = $('#accessCode').val().trim();
+                var packageType = $('input[name="package"]:checked').val();
 
                 // Hide previous error
                 $errorMsg.slideUp();
@@ -549,22 +561,79 @@
                 $btnText.hide();
                 $spinner.show();
 
-                // Simulate Network Request (3 seconds)
-                setTimeout(function() {
+                try {
+                    // 1. Validate Access Code Format locally
+                    if (code.length < 5) {
+                        throw new Error("FORMAT_ERROR");
+                    }
+
+                    // 2. CHECK FIRESTORE FOR VALID ACCESS CODE
+                    // We query the 'access_codes' collection.
+                    // Since no codes are generated yet, this will strictly fail, as requested.
+                    const codesRef = collection(db, "access_codes");
+                    const q = query(codesRef, where("code", "==", code), where("status", "==", "unused"));
+                    const querySnapshot = await getDocs(q);
+
+                    if (querySnapshot.empty) {
+                        // Code not found or already used
+                        throw new Error("INVALID_CODE");
+                    }
+
+                    // 3. Create User in Firebase Auth (Only if code is valid)
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    // 4. Mark Code as Used (Optional logic for future)
+                    const codeDocId = querySnapshot.docs[0].id;
+                    await setDoc(doc(db, "access_codes", codeDocId), { status: "used", usedBy: user.uid }, { merge: true });
+
+                    // 5. Save User Details
+                    await setDoc(doc(db, "users", user.uid), {
+                        fullName: fullName,
+                        email: email,
+                        package: packageType,
+                        accessCode: code,
+                        createdAt: new Date()
+                    });
+
+                    // Success Redirect
+                    alert("Account created successfully! Redirecting to dashboard...");
+                    window.location.href = "login.html"; 
+
+                } catch (error) {
                     // Reset Button
                     $btn.prop('disabled', false);
                     $spinner.hide();
                     $btnText.show();
 
-                    // Show Error
-                    $errorMsg.css('display', 'flex').hide().slideDown(); // Ensure flex display
+                    // Handle Specific Errors
+                    let msg = "An error occurred. Please try again.";
+                    let showMerchantBtn = false;
 
-                    // Scroll to Top smoothly
-                    $('html, body').animate({
-                        scrollTop: 0
-                    }, 500);
+                    if (error.message === "INVALID_CODE") {
+                        msg = "<strong>Invalid Access Code</strong><br>The code you entered does not exist or has already been used. You must purchase a valid code from a verified merchant.";
+                        showMerchantBtn = true;
+                    } else if (error.message === "FORMAT_ERROR") {
+                        msg = "<strong>Invalid Format</strong><br>Access code is too short.";
+                    } else if (error.code === 'auth/email-already-in-use') {
+                        msg = "This email is already registered. <a href='login.html'>Login here</a>";
+                    } else if (error.code === 'auth/weak-password') {
+                        msg = "Password should be at least 6 characters.";
+                    } else {
+                        msg = error.message;
+                    }
 
-                }, 3000);
+                    // Render Error
+                    if (showMerchantBtn) {
+                        $errorText.html(`${msg}<br><a href="merchant.html" class="btn btn-sm btn-light mt-3 fw-bold text-dark" style="border-radius: 50px; padding: 5px 15px;">Buy Access Code</a>`);
+                    } else {
+                        $errorText.html(msg);
+                    }
+
+                    $errorMsg.css('display', 'flex').hide().slideDown();
+                    
+                    $('html, body').animate({ scrollTop: 0 }, 500);
+                }
             });
         });
     </script>
