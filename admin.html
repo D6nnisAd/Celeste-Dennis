@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- CRITICAL FIX: Allows Imgur images to load -->
     <meta name="referrer" content="no-referrer">
+    
     <title>Admin Dashboard | Celeste</title>
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+    <link rel="shortcut icon" href="assets/favicon/favicon.ico">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -380,9 +388,6 @@
                 width: 100%;
                 text-align: center;
             }
-            #globalLinkInput {
-                margin-bottom: 10px;
-            }
         }
     </style>
 </head>
@@ -425,28 +430,6 @@
         </header>
 
         <div class="container">
-            <!-- Global Link Section -->
-            <div class="dashboard-card">
-                <div class="card-header-custom">
-                    <h5 class="card-title"><i class="fa-solid fa-link"></i> Global Redirect</h5>
-                </div>
-                <p class="text-white-50 small mb-3">
-                    Set the destination URL for all clickable elements (images, cards, icons) on the main website.
-                </p>
-                <div class="d-flex flex-column flex-md-row gap-2">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fa-solid fa-globe"></i></span>
-                        <input type="url" id="globalLinkInput" class="form-control" placeholder="https://example.com/promo-page">
-                    </div>
-                    <button class="btn btn-accent text-nowrap" id="saveGlobalLinkBtn">
-                        <i class="fa-solid fa-save me-2"></i> Save Link
-                    </button>
-                </div>
-                <div id="globalSaveMsg" class="mt-2 small text-success fw-bold" style="opacity:0; transition:opacity 0.5s;">
-                    <i class="fa-solid fa-check-circle me-1"></i> Settings saved successfully!
-                </div>
-            </div>
-
             <!-- Merchant Management Section -->
             <div class="dashboard-card">
                 <div class="card-header-custom">
@@ -585,43 +568,8 @@
         // --- Dashboard Functions ---
 
         function initDashboard() {
-            loadGlobalLink();
             loadMerchants();
         }
-
-        // Global Link Logic
-        async function loadGlobalLink() {
-            try {
-                const docRef = doc(db, "settings", "global");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    document.getElementById('globalLinkInput').value = docSnap.data().url || "";
-                }
-            } catch (e) {
-                console.error("Error loading settings", e);
-            }
-        }
-
-        document.getElementById('saveGlobalLinkBtn').addEventListener('click', async function() {
-            const btn = this;
-            const originalHTML = btn.innerHTML;
-            const url = document.getElementById('globalLinkInput').value;
-            
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
-
-            try {
-                await setDoc(doc(db, "settings", "global"), { url: url }, { merge: true });
-                const msg = document.getElementById('globalSaveMsg');
-                msg.style.opacity = '1';
-                setTimeout(() => msg.style.opacity = '0', 3000);
-            } catch (e) {
-                alert("Error saving link: " + e.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalHTML;
-            }
-        });
 
         // Merchant Logic
         function loadMerchants() {

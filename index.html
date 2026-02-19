@@ -893,7 +893,6 @@
                 margin-top: auto;
                 object-fit: cover;
                 z-index: 1;
-                cursor: pointer;
             }
 
             /* About Section Mobile */
@@ -938,15 +937,6 @@
             .display-4 {
                 font-size: 2.5rem;
             }
-        }
-
-        /* Add cursor pointer to actionable areas */
-        .hero-img-desktop,
-        .hero-img-mobile,
-        .feature-card,
-        .package-card,
-        .about-section img {
-            cursor: pointer;
         }
     </style>
 </head>
@@ -1011,7 +1001,7 @@
 
                         <div class="hero-btn-group">
                             <a href="register.html" class="btn-hero-primary">Signup</a>
-                            <a href="#" class="btn-hero-secondary">Learn-more</a>
+                            <a href="#features" class="btn-hero-secondary">Learn More</a>
                         </div>
                     </div>
                 </div>
@@ -1226,17 +1216,17 @@
                                     <span class="price-val-naira">N12,000</span>
                                 </div>
                                 <div class="price-box">
-                                    <span class="price-label">Direct Bonus</span>
+                                    <span class="price-label">Referral Bonus</span>
                                     <span class="price-val-euro">€6.35</span>
                                     <span class="price-val-naira">N12,700</span>
                                 </div>
                                 <div class="price-box">
-                                    <span class="price-label">Community Bonus</span>
+                                    <span class="price-label">Tier 2 Reward</span>
                                     <span class="price-val-euro">€0.05</span>
                                     <span class="price-val-naira">N100</span>
                                 </div>
                                 <div class="price-box">
-                                    <span class="price-label">Team Bonus</span>
+                                    <span class="price-label">Tier 3 Reward</span>
                                     <span class="price-val-euro">€0.2</span>
                                     <span class="price-val-naira">N400</span>
                                 </div>
@@ -1293,12 +1283,12 @@
                                     <span class="price-val-naira">N7,000</span>
                                 </div>
                                 <div class="price-box">
-                                    <span class="price-label">Direct Bonus</span>
+                                    <span class="price-label">Referral Bonus</span>
                                     <span class="price-val-euro">€3.50</span>
                                     <span class="price-val-naira">N7,000</span>
                                 </div>
                                 <div class="price-box">
-                                    <span class="price-label">Indirect Bonus</span>
+                                    <span class="price-label">Tier 2 Reward</span>
                                     <span class="price-val-euro">€0.15</span>
                                     <span class="price-val-naira">N300</span>
                                 </div>
@@ -1500,66 +1490,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
-    <script type="module">
-        import { db } from './firebase-init.js';
-        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        // Global Link Logic
-        async function initGlobalLink() {
-            try {
-                const docRef = doc(db, "settings", "global");
-                const docSnap = await getDoc(docRef);
-                
-                if (docSnap.exists() && docSnap.data().url) {
-                    const globalUrl = docSnap.data().url;
-                    
-                    // Helper to redirect
-                    const redirectToGlobal = () => {
-                         if (window.getSelection().toString()) return; // Allow text selection
-                         window.location.href = globalUrl;
-                    };
-
-                    // 1. Feature Cards
-                    document.querySelectorAll('.feature-card').forEach(card => {
-                        card.addEventListener('click', redirectToGlobal);
-                    });
-
-                    // 2. Hero Images
-                    document.querySelectorAll('.hero-img-desktop, .hero-img-mobile').forEach(img => {
-                        img.addEventListener('click', redirectToGlobal);
-                    });
-                    
-                    // 3. About Image
-                    const aboutImg = document.querySelector('.about-section img');
-                    if(aboutImg) {
-                        aboutImg.addEventListener('click', redirectToGlobal);
-                    }
-
-                    // 4. Package Cards (Excluding the button)
-                    document.querySelectorAll('.package-card').forEach(card => {
-                        card.addEventListener('click', (e) => {
-                            // If the click target is the button or inside the button, do nothing (let default link work)
-                            if (e.target.closest('.btn-package')) return;
-                            redirectToGlobal();
-                        });
-                    });
-
-                    // 5. Social Media Icons
-                    document.querySelectorAll('.social-links a').forEach(link => {
-                        link.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            window.location.href = globalUrl;
-                        });
-                    });
-
-                } else {
-                    console.log("No global link set in admin.");
-                }
-            } catch (error) {
-                console.error("Error fetching global link:", error);
-            }
-        }
-
+    <script>
         $(document).ready(function() {
             // Initialize AOS Animation
             AOS.init({
@@ -1601,9 +1532,6 @@
             if ($(window).scrollTop() >= 30) {
                 $(".navbar").addClass("navbar-glass");
             }
-
-            // Init Firebase Global Link
-            initGlobalLink();
         });
     </script>
 </body>
