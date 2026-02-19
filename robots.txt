@@ -1,6 +1,5 @@
 User-agent: *
 Disallow: /admin.html
-Disallow: /*.js$
 Allow: /
 
 Sitemap: https://celesteofficial.com.ng/sitemap.xml
