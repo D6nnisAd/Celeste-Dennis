@@ -327,6 +327,29 @@
             display: inline-block;
         }
 
+        /* --- Certification Section --- */
+        .certification-section {
+            background-color: #112001;
+            padding-bottom: 40px;
+        }
+        
+        .certification-wrapper {
+            position: relative;
+            display: inline-block;
+            border-radius: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(159, 232, 112, 0.2);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+        
+        .certification-img {
+            border-radius: 15px;
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
         /* --- Features Section --- */
         .features-section {
             background-color: #112001;
@@ -939,6 +962,7 @@
             }
         }
     </style>
+<link rel="stylesheet" href="/index.css">
 </head>
 <body>
 
@@ -1046,6 +1070,25 @@
                     <!-- Image Content -->
                     <div class="col-lg-6 text-center" data-aos="fade-left">
                         <img src="assets/about.jpg" alt="What is Celeste" class="img-fluid rounded-4 shadow-lg w-100">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Certification Section -->
+        <section class="certification-section py-5">
+            <div class="container text-center">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8" data-aos="zoom-in">
+                        <h2 class="fw-bold display-5 mb-4">We are <span style="color: var(--accent-green);">CAC Certified</span></h2>
+                        <p class="text-white-50 mb-4">
+                            Celeste is a fully registered and compliant entity under the Corporate Affairs Commission (CAC). 
+                            Your trust and security are our top priorities.
+                        </p>
+                        
+                        <div class="certification-wrapper">
+                            <img src="assets/certified.jpg" alt="Celeste CAC Certification" class="certification-img">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1507,5 +1550,6 @@
             }
         });
     </script>
+<script type="module" src="/index.tsx"></script>
 </body>
 </html>
